@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search Routes — Bus Route Information System</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Search Page specific controls */
+    .search-panel {
+      background: var(--bg-surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      padding: 1.75rem;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .search-tabs {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 2px solid var(--border-color);
+      margin-bottom: 1.5rem;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      padding: 0.75rem 1.25rem;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      white-space: nowrap;
+    }
+
+    .tab-btn.active {
+      color: var(--accent-blue);
+      border-bottom-color: var(--accent-blue);
+    }
+
+    .search-bar-inline {
+      display: flex;
+      gap: 0.75rem;
+      position: relative;
+    }
+
+    .search-input-field {
+      flex: 1;
+      padding: 0.85rem 1.25rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .search-input-field:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .results-count {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .active-filter-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--accent-blue-soft);
+      color: var(--accent-blue);
+      padding: 0.3rem 0.75rem;
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Site Header & Navigation -->
+  <header class="site-header">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo" aria-label="Home">
+        <span class="brand-icon">🚌</span>
+        <div class="brand-text">
+          <span class="brand-title">Bus Route</span>
+          <span class="brand-subtitle">Information System</span>
+        </div>
+      </a>
+
+      <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle navigation menu">
+        ☰
+      </button>
+
+      <nav>
+        <ul class="nav-menu" id="navMenu">
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <li><a href="search.html" class="nav-link active">Search Routes</a></li>
+          <li><a href="index.html#find-route-section" class="nav-link">Find Route</a></li>
+          <li><a href="admin/login.html" class="nav-link" style="color: #93c5fd;">Admin Portal 🔒</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="flex: 1; padding-bottom: 3.5rem;">
+    <!-- Breadcrumb Navigation -->
+    <div class="breadcrumb-nav">
+      <a href="index.html">Home</a>
+      <span>›</span>
+      <span>Search Transit Routes</span>
+    </div>
+
+    <!-- Search Controls Panel -->
+    <section class="search-panel">
+      <!-- Search Mode Tabs -->
+      <div class="search-tabs" role="tablist">
+        <button class="tab-btn active" id="tabGeneralSearch" role="tab" aria-selected="true">
+          <span>🔍</span> Search by Route Number or Stop Name
+        </button>
+        <button class="tab-btn" id="tabPathSearch" role="tab" aria-selected="false">
+          <span>📍</span> Find Route Between Two Stops
+        </button>
+      </div>
+
+      <!-- Tab 1: General Route / Stop Query Search -->
+      <div id="panelGeneralSearch">
+        <form id="generalSearchForm" class="search-bar-inline" autocomplete="off">
+          <input
+            type="text"
+            id="querySearchInput"
+            class="search-input-field"
+            placeholder="Search by route number (e.g. 101) or stop name (e.g. University, Market Junction)..."
+          >
+          <button type="submit" class="btn-primary" style="height: auto; padding: 0.85rem 1.8rem;">
+            <span>SEARCH</span>
+          </button>
+          <button type="button" id="clearSearchBtn" class="btn-secondary" style="display: none;">
+            Clear
+          </button>
+        </form>
+
+        <!-- Quick Suggestions List -->
+        <div class="quick-tags" style="justify-content: flex-start; margin-top: 1rem;">
+          <span class="quick-tag-label" style="color: var(--text-muted);">Suggestions:</span>
+          <button class="tag-btn" style="color: var(--text-secondary); background: var(--bg-subtle); border-color: var(--border-color);" data-fill="SR University">🎓 SR University</button>
+          <button class="tag-btn" style="color: var(--text-secondary); background: var(--bg-subtle); border-color: var(--border-color);" data-fill="101">Route 101</button>
+          <button class="tag-btn" style="color: var(--text-secondary); background: var(--bg-subtle); border-color: var(--border-color);" data-fill="105">Route 105</button>
+          <button class="tag-btn" style="color: var(--text-secondary); background: var(--bg-subtle); border-color: var(--border-color);" data-fill="Hanamkonda Bus Station">Hanamkonda Bus Station</button>
+          <button class="tag-btn" style="color: var(--text-secondary); background: var(--bg-subtle); border-color: var(--border-color);" data-fill="Kazipet Railway Station">Kazipet Railway Station</button>
+          <button class="tag-btn" style="color: var(--text-secondary); background: var(--bg-subtle); border-color: var(--border-color);" data-fill="Hasanparthy">Hasanparthy</button>
+        </div>
+      </div>
+
+      <!-- Tab 2: Path Between Stops Search -->
+      <div id="panelPathSearch" style="display: none;">
+        <form id="searchPagePathForm">
+          <div class="path-form-grid" style="align-items: flex-end;">
+            <div class="form-group">
+              <label for="searchFromStopSelect" class="form-label">
+                <span class="form-label-icon">🟢</span> FROM (Starting Stop)
+              </label>
+              <select id="searchFromStopSelect" class="custom-select" required>
+                <option value="" disabled selected>Select starting stop...</option>
+              </select>
+            </div>
+
+            <button type="button" class="swap-btn" id="searchSwapStopsBtn" title="Swap stops" aria-label="Swap stops">
+              ⇄
+            </button>
+
+            <div class="form-group">
+              <label for="searchToStopSelect" class="form-label">
+                <span class="form-label-icon">🔴</span> TO (Destination Stop)
+              </label>
+              <select id="searchToStopSelect" class="custom-select" required>
+                <option value="" disabled selected>Select destination stop...</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn-primary" style="height: 50px;">
+              <span>FIND ROUTE</span>
+            </button>
+          </div>
+
+          <div class="form-alert" id="searchPageAlertBox">
+            <span id="searchPageAlertIcon">⚠️</span>
+            <span id="searchPageAlertMsg"></span>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Search Results Section -->
+    <section id="resultsSection">
+      <!-- Results Header Info -->
+      <div class="results-header" id="resultsHeader">
+        <h2 class="results-count" id="resultsCountTitle">Available Bus Routes</h2>
+        <div id="activeFilterBadgeContainer"></div>
+      </div>
+
+      <!-- State Containers: Loading, Empty, Error, Results Grid -->
+      <div id="resultsContent">
+        <!-- Results Grid will be populated by JavaScript -->
+        <div class="routes-grid" id="searchResultsGrid"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <div style="font-weight: 800; font-size: 1.1rem; color: white;">🚌 Bus Route Information System</div>
+          <div style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.7);">
+            Search bus routes by number, stop name, or origin and destination stops
+          </div>
+        </div>
+
+        <ul class="footer-links">
+          <li><a href="index.html" class="footer-link">Home</a></li>
+          <li><a href="search.html" class="footer-link">Search Routes</a></li>
+          <li><a href="index.html#find-route-section" class="footer-link">Find Route</a></li>
+        </ul>
+
+        <div class="system-status">
+          <span class="status-dot"></span>
+          <span>API Connected</span>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        Bus Route Information System — Hackathon Project &copy; 2026. Built with Node.js, Express & MongoDB.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/search.js"></script>
+</body>
+</html>

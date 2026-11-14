@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bus Route Information System — City Transit Portal</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Site Header & Navigation -->
+  <header class="site-header">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo" aria-label="Home">
+        <span class="brand-icon">🚌</span>
+        <div class="brand-text">
+          <span class="brand-title">Bus Route</span>
+          <span class="brand-subtitle">Information System</span>
+        </div>
+      </a>
+
+      <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle navigation menu">
+        ☰
+      </button>
+
+      <nav>
+        <ul class="nav-menu" id="navMenu">
+          <li><a href="index.html" class="nav-link active">Home</a></li>
+          <li><a href="search.html" class="nav-link">Search Routes</a></li>
+          <li><a href="#find-route-section" class="nav-link">Find Route</a></li>
+          <li><a href="admin/login.html" class="nav-link" style="color: #93c5fd;">Admin Portal 🔒</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section with Quick Search -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span>📍</span> Official City Transit Search
+        </div>
+        <h1 class="hero-title">Find Your Bus Route</h1>
+        <p class="hero-description">
+          Search by route number or stop name across the city transit network
+        </p>
+
+        <!-- Search Bar with Autocomplete Suggestions -->
+        <div class="search-box-container">
+          <form class="search-form" id="heroSearchForm" autocomplete="off">
+            <div class="search-input-wrapper">
+              <span class="search-icon">🔍</span>
+              <input
+                type="text"
+                class="search-input"
+                id="heroSearchInput"
+                placeholder="Enter route number or stop name (e.g. 101, SR University, Hanamkonda)"
+                required
+              >
+            </div>
+            <button type="submit" class="search-btn">
+              <span>SEARCH</span>
+            </button>
+          </form>
+
+          <!-- Autocomplete Suggestions Dropdown -->
+          <div class="suggestions-dropdown" id="heroSuggestionsDropdown"></div>
+        </div>
+
+        <!-- Quick Search Tags -->
+        <div class="quick-tags">
+          <span class="quick-tag-label">Popular Searches:</span>
+          <button class="tag-btn" data-query="SR University">🎓 SR University</button>
+          <button class="tag-btn" data-query="101">Route 101</button>
+          <button class="tag-btn" data-query="105">Route 105</button>
+          <button class="tag-btn" data-query="Hanamkonda Bus Station">Hanamkonda Bus Station</button>
+          <button class="tag-btn" data-query="Kazipet Railway Station">Kazipet Railway Station</button>
+          <button class="tag-btn" data-query="Warangal Railway Station">Warangal Railway Station</button>
+          <button class="tag-btn" data-query="Hasanparthy">Hasanparthy</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content Area -->
+  <main>
+    <!-- Find Route Between Two Stops Section (Section 11) -->
+    <section class="path-finder-section" id="find-route-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Direct Path Finder</span>
+          <h2 class="section-title">Find Route Between Stops</h2>
+          <p class="section-subtitle">Select your starting stop and destination to find all connecting direct buses</p>
+        </div>
+
+        <div class="path-finder-card">
+          <form id="pathFinderForm">
+            <div class="path-form-grid">
+              <!-- Starting Stop Selector -->
+              <div class="form-group">
+                <label for="fromStopSelect" class="form-label">
+                  <span class="form-label-icon">🟢</span> FROM (Starting Stop)
+                </label>
+                <select id="fromStopSelect" class="custom-select" required>
+                  <option value="" disabled selected>Loading stops...</option>
+                </select>
+              </div>
+
+              <!-- Swap Button -->
+              <button type="button" class="swap-btn" id="swapStopsBtn" title="Swap Starting & Destination Stops" aria-label="Swap stops">
+                ⇄
+              </button>
+
+              <!-- Destination Stop Selector -->
+              <div class="form-group">
+                <label for="toStopSelect" class="form-label">
+                  <span class="form-label-icon">🔴</span> TO (Destination Stop)
+                </label>
+                <select id="toStopSelect" class="custom-select" required>
+                  <option value="" disabled selected>Loading stops...</option>
+                </select>
+              </div>
+
+              <!-- Submit Button -->
+              <button type="submit" class="btn-primary" id="findRouteBtn">
+                <span>FIND ROUTE</span>
+                <span>→</span>
+              </button>
+            </div>
+
+            <!-- Validation Alert Box -->
+            <div class="form-alert" id="pathAlertBox">
+              <span id="pathAlertIcon">⚠️</span>
+              <span id="pathAlertMsg"></span>
+            </div>
+          </form>
+
+          <!-- Direct Results Container (when searched on homepage) -->
+          <div id="pathResultsContainer" style="display: none; margin-top: 2rem;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Available Routes Section -->
+    <section style="padding: 3.5rem 0; background: var(--bg-surface);">
+      <div class="container">
+        <div class="section-header" style="text-align: left; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <span class="section-tag">City Network</span>
+            <h2 class="section-title">Available Bus Routes</h2>
+            <p class="section-subtitle">Explore all operating transit routes, schedules, and route paths</p>
+          </div>
+          <a href="search.html" class="btn-secondary">
+            View All in Search Page →
+          </a>
+        </div>
+
+        <!-- Dynamic Routes Grid -->
+        <div class="routes-grid" id="homeRoutesGrid">
+          <div class="state-box" style="grid-column: 1 / -1;">
+            <div class="spinner"></div>
+            <p class="state-desc">Loading available transit routes...</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <div style="font-weight: 800; font-size: 1.1rem; color: white;">🚌 Bus Route Information System</div>
+          <div style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.7);">
+            City public transportation route search and schedule navigator
+          </div>
+        </div>
+
+        <ul class="footer-links">
+          <li><a href="index.html" class="footer-link">Home</a></li>
+          <li><a href="search.html" class="footer-link">Search Routes</a></li>
+          <li><a href="#find-route-section" class="footer-link">Find Route</a></li>
+        </ul>
+
+        <div class="system-status" id="systemStatusBadge">
+          <span class="status-dot"></span>
+          <span id="systemStatusText">Connecting to API...</span>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        Bus Route Information System — Hackathon Project &copy; 2026. Built with Node.js, Express & MongoDB.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

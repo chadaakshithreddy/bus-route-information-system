@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Route Details — Bus Route Information System</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Site Header & Navigation -->
+  <header class="site-header">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo" aria-label="Home">
+        <span class="brand-icon">🚌</span>
+        <div class="brand-text">
+          <span class="brand-title">Bus Route</span>
+          <span class="brand-subtitle">Information System</span>
+        </div>
+      </a>
+
+      <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle navigation menu">
+        ☰
+      </button>
+
+      <nav>
+        <ul class="nav-menu" id="navMenu">
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <li><a href="search.html" class="nav-link active">Search Routes</a></li>
+          <li><a href="index.html#find-route-section" class="nav-link">Find Route</a></li>
+          <li><a href="admin/login.html" class="nav-link" style="color: #93c5fd;">Admin Portal 🔒</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="flex: 1; padding-bottom: 4rem;">
+    <!-- Breadcrumb Navigation -->
+    <div class="breadcrumb-nav">
+      <a href="index.html">Home</a>
+      <span>›</span>
+      <a href="search.html">Routes</a>
+      <span>›</span>
+      <span id="breadcrumbRouteName">Loading Route...</span>
+    </div>
+
+    <!-- Main Dynamic Route Details Content -->
+    <div id="routeDetailsContainer">
+      <!-- Loading State default -->
+      <div class="state-box">
+        <div class="spinner"></div>
+        <h3 class="state-title">Loading Route Information</h3>
+        <p class="state-desc">Fetching route details, timings, and stop sequence from transit database...</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <div style="font-weight: 800; font-size: 1.1rem; color: white;">🚌 Bus Route Information System</div>
+          <div style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.7);">
+            Official route timetable, stop sequence, and transit pathway viewer
+          </div>
+        </div>
+
+        <ul class="footer-links">
+          <li><a href="index.html" class="footer-link">Home</a></li>
+          <li><a href="search.html" class="footer-link">Search Routes</a></li>
+          <li><a href="index.html#find-route-section" class="footer-link">Find Route</a></li>
+        </ul>
+
+        <div class="system-status">
+          <span class="status-dot"></span>
+          <span>API Connected</span>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        Bus Route Information System — Hackathon Project &copy; 2026. Built with Node.js, Express & MongoDB.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/route-details.js"></script>
+</body>
+</html>

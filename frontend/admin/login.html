@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login — Bus Route Information System</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f274a 0%, #1e3a8a 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .login-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+      width: 100%;
+      max-width: 440px;
+      padding: 2.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .login-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--accent-blue-soft);
+      color: var(--accent-blue);
+      padding: 0.3rem 0.8rem;
+      border-radius: var(--radius-full);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .login-title {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+    }
+
+    .login-desc {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 0.4rem;
+      display: block;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+      color: var(--text-main);
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .form-input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .btn-login {
+      width: 100%;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 0.95rem;
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-top: 0.75rem;
+    }
+
+    .btn-login:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-login:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .demo-box {
+      margin-top: 1.5rem;
+      background: var(--bg-subtle);
+      border: 1px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 0.9rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .demo-box strong {
+      color: var(--text-main);
+    }
+
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover {
+      color: white;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-card">
+    <div class="login-header">
+      <span class="login-badge">🔒 System Administration</span>
+      <h1 class="login-title">ADMIN LOGIN</h1>
+      <p class="login-desc">Sign in with administrator credentials to manage transit routes and stops</p>
+    </div>
+
+    <!-- Alert Message Box -->
+    <div id="loginAlert" class="form-alert" style="margin-bottom: 1.25rem;">
+      <span id="loginAlertIcon">⚠️</span>
+      <span id="loginAlertMsg"></span>
+    </div>
+
+    <form id="adminLoginForm" autocomplete="off">
+      <div class="form-group">
+        <label for="adminEmail" class="form-label">Email</label>
+        <input
+          type="email"
+          id="adminEmail"
+          class="form-input"
+          placeholder="admin@busroute.com"
+          required
+          autofocus
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="adminPassword" class="form-label">Password</label>
+        <input
+          type="password"
+          id="adminPassword"
+          class="form-input"
+          placeholder="••••••••"
+          required
+        >
+      </div>
+
+      <button type="submit" class="btn-login" id="loginBtn">
+        LOGIN
+      </button>
+    </form>
+
+    <!-- Hackathon Demo Credentials Helper -->
+    <div class="demo-box">
+      <div><strong>🔑 Hackathon Demo Credentials:</strong></div>
+      <div style="margin-top: 0.25rem;">Email: <code>admin@busroute.com</code></div>
+      <div>Password: <code>admin123</code></div>
+    </div>
+  </div>
+
+  <a href="../index.html" class="back-link">← Return to Passenger Website</a>
+
+  <script src="../js/api.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check if already authenticated as admin
+      const token = localStorage.getItem('adminToken');
+      const userStr = localStorage.getItem('adminUser');
+      if (token && userStr) {
+        try {
+          const user = JSON.parse(userStr);
+          if (user.role === 'admin') {
+            window.location.href = 'dashboard.html';
+            return;
+          }
+        } catch (e) {}
+      }
+
+      const form = document.getElementById('adminLoginForm');
+      const emailInput = document.getElementById('adminEmail');
+      const passwordInput = document.getElementById('adminPassword');
+      const loginBtn = document.getElementById('loginBtn');
+      const alertBox = document.getElementById('loginAlert');
+      const alertMsg = document.getElementById('loginAlertMsg');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        hideAlert();
+
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+
+        if (!email || !password) {
+          showAlert('Please enter both email and password.', 'warning');
+          return;
+        }
+
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'AUTHENTICATING...';
+
+        try {
+          const res = await window.BusRouteAPI.login(email, password);
+
+          if (!res.success || !res.token) {
+            throw new Error(res.message || 'Authentication failed');
+          }
+
+          // Role enforcement check (Section 2)
+          if (res.data.role !== 'admin') {
+            localStorage.removeItem('adminToken');
+            localStorage.removeItem('adminUser');
+            showAlert('Access denied. Administrator privileges are required.', 'error');
+            loginBtn.disabled = false;
+            loginBtn.textContent = 'LOGIN';
+            return;
+          }
+
+          // Store admin session
+          localStorage.setItem('adminToken', res.token);
+          localStorage.setItem('adminUser', JSON.stringify(res.data));
+
+          // Redirect to admin dashboard
+          window.location.href = 'dashboard.html';
+        } catch (error) {
+          showAlert(error.message || 'Invalid email or password.', 'error');
+          loginBtn.disabled = false;
+          loginBtn.textContent = 'LOGIN';
+        }
+      });
+
+      function showAlert(msg, type = 'error') {
+        alertBox.className = `form-alert ${type}`;
+        alertMsg.textContent = msg;
+        alertBox.style.display = 'flex';
+      }
+
+      function hideAlert() {
+        alertBox.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
